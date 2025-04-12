@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Replacement Algorithms Simulation</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Page Replacement Algorithms Simulation</h1>
+        
+        <form method="POST" class="input-form">
+            <input type="text" name="input" placeholder="Enter page sequence (e.g., 7 0 1 2 0 3 0 4 2 3)" value="{{.Input}}" required>
+            <input type="number" name="frames" placeholder="Frames" value="{{.Frames}}" min="1" required>
+            <select name="algorithm" required>
+                <option value="" {{if not .Algorithm}}selected{{end}} disabled>Select Algorithm</option>
+                <option value="FIFO" {{if eq .Algorithm "FIFO"}}selected{{end}}>FIFO</option>
+                <option value="Optimal" {{if eq .Algorithm "Optimal"}}selected{{end}}>Optimal</option>
+                <option value="LRU" {{if eq .Algorithm "LRU"}}selected{{end}}>LRU</option>
+                <option value="LFU" {{if eq .Algorithm "LFU"}}selected{{end}}>LFU</option>
+                <option value="MFU" {{if eq .Algorithm "MFU"}}selected{{end}}>MFU</option>
+                <option value="Second Chance" {{if eq .Algorithm "Second Chance"}}selected{{end}}>Second Chance</option>
+            </select>
+            <input type="hidden" name="current_step" value="{{.Step}}">
+            <button type="submit" name="action" value="">Simulate</button>
+            {{if .Results}}
+            <button type="submit" name="action" value="step" {{if not .IsRunning}}disabled{{end}}>Step</button>
+            <button type="submit" name="action" value="end" {{if not .IsRunning}}disabled{{end}}>End</button>
+            <button type="submit" name="action" value="clear">Clear</button>
+            {{end}}
+        </form>
+
+        {{if .Message}}
+        <div class="error">{{.Message}}</div>
+        {{end}}
+
+        {{if .Results}}
+            {{range $algo, $result := .Results}}
+            <div class="algorithm">
+                <h3>{{$algo}}</h3>
+                <div class="algorithm-description">
+                    {{if eq $algo "FIFO"}}
+                        First-In-First-Out: Replaces the oldest page in memory
+                    {{else if eq $algo "Optimal"}}
+                        Optimal: Replaces the page that will not be used for the longest time in the future
+                    {{else if eq $algo "LRU"}}
+                        Least Recently Used: Replaces the page that hasn't been used for the longest time
+                    {{else if eq $algo "LFU"}}
+                        Least Frequently Used: Replaces the page that has been used least frequently
+                    {{else if eq $algo "MFU"}}
+                        Most Frequently Used: Replaces the page that has been used most frequently
+                    {{else if eq $algo "Second Chance"}}
+                        Second Chance (Clock): Similar to FIFO but gives pages a second chance before replacement
+                    {{end}}
+                </div>
+                <div class="frames">
+                    {{range $index, $step := $result.Steps}}
+                        {{if le $index $.Step}}
+                            <div class="frame-set">
+                                <div class="page-number" {{if $step.IsFault}}style="color: #dc3545"{{end}}>{{$step.PageNumber}}</div>
+                                {{if $step.IsFault}}
+                                    {{range $step.Frames}}
+                                        <div class="frame">{{if eq . -1}}-{{else}}{{.}}{{end}}</div>
+                                    {{end}}
+                                {{end}}
+                            </div>
+                        {{end}}
+                    {{end}}
+                </div>
+                {{if eq $algo "FIFO"}}
+                    <div class="queue-container">
+                        <div class="queue-title">Queue</div>
+                        <div class="queue">
+                            {{if ge $.Step 0}}
+                                {{range (index $result.Steps $.Step).Queue}}
+                                    <div class="queue-item">{{.}}</div>
+                                {{end}}
+                            {{end}}
+                        </div>
+                    </div>
+                {{end}}
+                <div style="margin-top: 10px; text-align: right;">
+                    {{$currentFaults := 0}}
+                    {{range $index, $step := $result.Steps}}
+                        {{if le $index $.Step}}
+                            {{if $step.IsFault}}
+                                {{$currentFaults = add $currentFaults 1}}
+                            {{end}}
+                        {{end}}
+                    {{end}}
+                    Page Faults: {{$currentFaults}}
+                </div>
+            </div>
+            {{end}}
+        {{end}}
+    </div>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

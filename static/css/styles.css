@@ -1,0 +1,159 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.input-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+input[type="text"], input[type="number"], select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+input[type="number"] {
+    width: 80px;
+}
+
+input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+}
+
+select {
+    min-width: 150px;
+}
+
+button {
+    padding: 8px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.algorithm {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.algorithm h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+.simulation-container {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.frames {
+    display: inline-flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.frame-set {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 40px;
+}
+
+.page-number {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #007bff;
+    font-size: 1.1em;
+}
+
+.frame {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e3f2fd;
+    margin: 2px 0;
+    font-size: 1.1em;
+}
+
+.error {
+    color: #dc3545;
+    text-align: center;
+    margin: 10px 0;
+}
+
+.algorithm-description {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.queue-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.queue-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.queue {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.queue-item {
+    padding: 5px 10px;
+    background-color: #e3f2fd;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    font-size: 0.9em;
+} 
