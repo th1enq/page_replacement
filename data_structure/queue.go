@@ -1,4 +1,4 @@
-package algorithms
+package ds
 
 // Queue represents a circular buffer queue implementation
 type Queue struct {
@@ -29,6 +29,10 @@ func (q *Queue) Push(item int) {
 	q.items[q.rear] = item
 	q.rear = (q.rear + 1) % q.capacity
 	q.size++
+}
+
+func (q *Queue) Size() int {
+	return q.size
 }
 
 // Pop removes and returns the oldest item from the queue

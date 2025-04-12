@@ -1,6 +1,5 @@
 package algorithms
 
-// LFU implements Least Frequently Used page replacement
 func LFU(pages []int, frameCount int) SimulationResult {
 	frames := make([]int, frameCount)
 	for i := range frames {
@@ -8,49 +7,56 @@ func LFU(pages []int, frameCount int) SimulationResult {
 	}
 
 	result := SimulationResult{}
+	freq := make(map[int]int)       // Tần suất xuất hiện
+	inPage := make(map[int]int)     // Vị trí trong frames
+	insertTime := make(map[int]int) // Thời điểm được thêm vào
+	timeCounter := 0                // Đếm thời gian để tie-break FIFO
+	currentIndex := 0
 
-	// Keep track of frequency for each frame
-	freq := make([]int, frameCount)
-	for i := range freq {
-		freq[i] = 0
-	}
-
-	for i, page := range pages {
-		found := false
-		foundIdx := -1
-		for j := range frames {
-			if frames[j] == page {
-				found = true
-				foundIdx = j
-				break
-			}
-		}
+	for _, page := range pages {
+		_, found := inPage[page]
 
 		if !found {
 			result.PageFaults++
-			if i < frameCount {
-				frames[i] = page
-				freq[i] = 1
+			if currentIndex < frameCount {
+				frames[currentIndex] = page
+				freq[page] = 1
+				inPage[page] = currentIndex
+				insertTime[page] = timeCounter
+				currentIndex++
 			} else {
-				// Find least frequently used frame
-				lfuIdx := 0
-				minFreq := freq[0]
-				for j := 1; j < frameCount; j++ {
-					if freq[j] < minFreq {
-						minFreq = freq[j]
-						lfuIdx = j
+				// Tìm trang có freq nhỏ nhất, nếu bằng thì theo FIFO
+				lfuPage := -1
+				lfuIdx := -1
+				minFreq := int(1e9)
+				oldestTime := int(1e9)
+
+				for p := range inPage {
+					if freq[p] < minFreq || (freq[p] == minFreq && insertTime[p] < oldestTime) {
+						minFreq = freq[p]
+						oldestTime = insertTime[p]
+						lfuPage = p
+						lfuIdx = inPage[p]
 					}
 				}
-				frames[lfuIdx] = page
-				freq[lfuIdx] = 1
+
+				idx := lfuIdx
+				delete(inPage, lfuPage)
+				delete(freq, lfuPage)
+				delete(insertTime, lfuPage)
+
+				frames[idx] = page
+				inPage[page] = idx
+				freq[page] = 1
+				insertTime[page] = timeCounter
 			}
 		} else {
-			// Increment frequency for the found page
-			freq[foundIdx]++
+			freq[page]++
 		}
 
 		step := createStep(page, frames, !found, append([]int{}, frames...))
 		result.Steps = append(result.Steps, step)
+		timeCounter++
 	}
 
 	return result

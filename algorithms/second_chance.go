@@ -8,58 +8,44 @@ func SecondChance(pages []int, frameCount int) SimulationResult {
 	}
 
 	result := SimulationResult{}
-
-	// Keep track of reference bits for each frame
 	refBits := make([]bool, frameCount)
-	for i := range refBits {
-		refBits[i] = false
-	}
-
-	// Keep track of the next frame to check
 	nextFrame := 0
 
-	for i, page := range pages {
-		found := false
-		foundIdx := -1
-		for j := range frames {
-			if frames[j] == page {
-				found = true
-				foundIdx = j
-				break
-			}
-		}
+	inPage := make(map[int]int) // map page -> index in frames
 
-		if !found {
+	for _, page := range pages {
+		idx, found := inPage[page]
+
+		if found {
+			refBits[idx] = true // cấp cơ hội thứ hai
+		} else {
 			result.PageFaults++
-			if i < frameCount {
-				frames[i] = page
-				refBits[i] = true
-			} else {
-				// Find a frame with reference bit = 0
-				startIdx := nextFrame
-				for {
-					if !refBits[nextFrame] {
-						break
+
+			for {
+				currentPage := frames[nextFrame]
+
+				// Nếu khung trống hoặc không được cấp cơ hội
+				if currentPage == -1 || !refBits[nextFrame] {
+					// Nếu trang trước đó có tồn tại, xoá khỏi map
+					if currentPage != -1 {
+						delete(inPage, currentPage)
 					}
+					frames[nextFrame] = page
+					refBits[nextFrame] = true
+					inPage[page] = nextFrame
+					nextFrame = (nextFrame + 1) % frameCount
+					break
+				} else {
+					// Đã cấp cơ hội, reset và tiếp tục
 					refBits[nextFrame] = false
 					nextFrame = (nextFrame + 1) % frameCount
-					if nextFrame == startIdx {
-						// All frames have been given a second chance
-						nextFrame = (nextFrame + 1) % frameCount
-						break
-					}
 				}
-				frames[nextFrame] = page
-				refBits[nextFrame] = true
-				nextFrame = (nextFrame + 1) % frameCount
 			}
-		} else {
-			// Set reference bit for the found page
-			refBits[foundIdx] = true
 		}
 
 		step := createStep(page, frames, !found, append([]int{}, frames...))
 		result.Steps = append(result.Steps, step)
 	}
+
 	return result
 }

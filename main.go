@@ -104,6 +104,8 @@ func handleSimulation(w http.ResponseWriter, r *http.Request) {
 			data.Results["Optimal"] = algorithms.Optimal(pages, frames)
 		case "LRU":
 			data.Results["LRU"] = algorithms.LRU(pages, frames)
+		case "MRU":
+			data.Results["LRU"] = algorithms.MRU(pages, frames)
 		case "LFU":
 			data.Results["LFU"] = algorithms.LFU(pages, frames)
 		case "MFU":
