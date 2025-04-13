@@ -47,6 +47,8 @@
                         Optimal: Replaces the page that will not be used for the longest time in the future
                     {{else if eq $algo "LRU"}}
                         Least Recently Used: Replaces the page that hasn't been used for the longest time
+                    {{else if eq $algo "MRU"}}
+                        Most Recently Used: Replaces the page that has been used most recently
                     {{else if eq $algo "LFU"}}
                         Least Frequently Used: Replaces the page that has been used least frequently
                     {{else if eq $algo "MFU"}}
@@ -76,6 +78,20 @@
                             {{if ge $.Step 0}}
                                 {{range (index $result.Steps $.Step).Queue}}
                                     <div class="queue-item">{{.}}</div>
+                                {{end}}
+                            {{end}}
+                        </div>
+                    </div>
+                {{else if or (eq $algo "LFU") (eq $algo "MFU")}}
+                    <div class="frequency-container">
+                        <div class="frequency-title">Frequency Table</div>
+                        <div class="frequency-table">
+                            {{if ge $.Step 0}}
+                                {{range $page, $freq := (index $result.Steps $.Step).Frequency}}
+                                    <div class="frequency-item">
+                                        <span class="page">Page {{$page}}:</span>
+                                        <span class="frequency">{{$freq}}</span>
+                                    </div>
                                 {{end}}
                             {{end}}
                         </div>

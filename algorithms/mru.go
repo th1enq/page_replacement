@@ -33,7 +33,7 @@ func MRU(pages []int, frameCount int) SimulationResult {
 		}
 		lastUsed = page
 
-		step := createStep(page, frames, !found, append([]int{}, frames...))
+		step := createStep(page, frames, !found, append([]int{}, frames...), make(map[int]int))
 		result.Steps = append(result.Steps, step)
 	}
 

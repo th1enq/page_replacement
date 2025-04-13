@@ -156,4 +156,42 @@ button:hover {
     border: 1px solid #007bff;
     border-radius: 4px;
     font-size: 0.9em;
+}
+
+.frequency-container {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.frequency-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.frequency-table {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.frequency-item {
+    padding: 5px 10px;
+    background-color: #e3f2fd;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    font-size: 0.9em;
+    display: flex;
+    gap: 5px;
+}
+
+.frequency-item .page {
+    color: #333;
+}
+
+.frequency-item .frequency {
+    color: #007bff;
+    font-weight: bold;
 } 

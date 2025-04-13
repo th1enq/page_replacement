@@ -41,7 +41,7 @@ func FIFO(pages []int, frameCount int) SimulationResult {
 			}
 		}
 
-		step := createStep(page, frames, !found, queue.ToSlice())
+		step := createStep(page, frames, !found, queue.ToSlice(), make(map[int]int))
 		result.Steps = append(result.Steps, step)
 	}
 	return result

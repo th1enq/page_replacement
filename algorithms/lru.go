@@ -44,7 +44,7 @@ func LRU(pages []int, frameCount int) SimulationResult {
 		}
 		index[page] = i
 
-		step := createStep(page, frames, !found, append([]int{}, frames...))
+		step := createStep(page, frames, !found, append([]int{}, frames...), make(map[int]int))
 		result.Steps = append(result.Steps, step)
 	}
 

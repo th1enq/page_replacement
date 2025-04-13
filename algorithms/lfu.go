@@ -54,7 +54,13 @@ func LFU(pages []int, frameCount int) SimulationResult {
 			freq[page]++
 		}
 
-		step := createStep(page, frames, !found, append([]int{}, frames...))
+		// Create a copy of the frequency map for the step
+		freqCopy := make(map[int]int)
+		for k, v := range freq {
+			freqCopy[k] = v
+		}
+
+		step := createStep(page, frames, !found, append([]int{}, frames...), freqCopy)
 		result.Steps = append(result.Steps, step)
 		timeCounter++
 	}
