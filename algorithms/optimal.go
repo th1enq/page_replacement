@@ -10,6 +10,8 @@ func Optimal(pages []int, frameCount int) SimulationResult {
 	}
 
 	result := SimulationResult{}
+	inPage := make(map[int]int)
+	currentIndex := 0
 
 	// Tiền xử lý vị trí xuất hiện của từng trang
 	occurrences := make(map[int][]int)
@@ -18,19 +20,15 @@ func Optimal(pages []int, frameCount int) SimulationResult {
 	}
 
 	for i, page := range pages {
-		found := false
-		for j := range frames {
-			if frames[j] == page {
-				found = true
-				break
-			}
-		}
+		_, found := inPage[page]
 
 		if !found {
 			result.PageFaults++
 			// Chưa đầy khung, thêm luôn
-			if i < frameCount {
-				frames[i] = page
+			if currentIndex < frameCount {
+				frames[currentIndex] = page
+				inPage[page] = 1
+				currentIndex++
 			} else {
 				farthest := -1
 				replaceIdx := 0
@@ -52,7 +50,10 @@ func Optimal(pages []int, frameCount int) SimulationResult {
 					}
 				}
 
+				delete(inPage, frames[replaceIdx])
+
 				frames[replaceIdx] = page
+				inPage[page] = 1
 			}
 		}
 
