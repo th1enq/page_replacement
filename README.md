@@ -37,6 +37,7 @@ The results will show the state of the frames after each page request for all al
 - **FIFO**: Replaces the oldest page in memory
 - **Optimal**: Replaces the page that will not be used for the longest time in the future
 - **LRU**: Replaces the page that hasn't been used for the longest time
+- **MRU**: Replaces the page that has been used most recently
 - **LFU**: Replaces the page that has been used least frequently
 - **MFU**: Replaces the page that has been used most frequently
 - **Second Chance**: Similar to FIFO but gives pages a second chance before replacement 
