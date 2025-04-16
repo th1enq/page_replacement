@@ -1,48 +1,48 @@
 package algorithms
 
 func LRU(pages []int, frameCount int) SimulationResult {
-	frames := make([]int, frameCount)
-	for i := range frames {
-		frames[i] = -1
-	}
-
+	frames := make([]int, 0, frameCount)
+	lastUsed := make(map[int]int)
 	result := SimulationResult{}
-	inPage := make(map[int]int) // page -> frame index
 
-	index := make(map[int]int)
-
-	lastUsed := 0
-
-	for i, page := range pages {
-		for lastUsed < i {
-			frontPage := pages[lastUsed]
-			_, exist := inPage[frontPage]
-			if !exist || index[frontPage] != lastUsed {
-				lastUsed++
-			} else {
+	for t, page := range pages {
+		found := false
+		for _, p := range frames {
+			if p == page {
+				found = true
 				break
 			}
 		}
 
-		_, found := inPage[page]
-
-		if !found {
+		if found {
+			// Cập nhật thời gian sử dụng
+			lastUsed[page] = t
+		} else {
 			// Page fault
 			result.PageFaults++
-
-			if i < frameCount {
-				frames[i] = page
-				inPage[page] = i
+			if len(frames) < frameCount {
+				frames = append(frames, page)
 			} else {
-				oldPage := pages[lastUsed]
-				lruIdx := inPage[oldPage]
-				delete(inPage, oldPage)
-
-				frames[lruIdx] = page
-				inPage[page] = lruIdx
+				// Tìm LRU page
+				lruPage := frames[0]
+				lruTime := lastUsed[lruPage]
+				for _, p := range frames {
+					if lastUsed[p] < lruTime {
+						lruPage = p
+						lruTime = lastUsed[p]
+					}
+				}
+				// Thay thế
+				for i, p := range frames {
+					if p == lruPage {
+						frames[i] = page
+						break
+					}
+				}
+				delete(lastUsed, lruPage)
 			}
+			lastUsed[page] = t
 		}
-		index[page] = i
 
 		step := createStep(page, frames, !found, append([]int{}, frames...), make(map[int]int))
 		result.Steps = append(result.Steps, step)

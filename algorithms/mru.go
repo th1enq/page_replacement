@@ -1,37 +1,46 @@
 package algorithms
 
 func MRU(pages []int, frameCount int) SimulationResult {
-	frames := make([]int, frameCount)
-	for i := range frames {
-		frames[i] = -1
-	}
-
+	frames := make([]int, 0, frameCount)
+	lastUsed := make(map[int]int)
 	result := SimulationResult{}
-	inPage := make(map[int]int) // page -> frame index
 
-	lastUsed := 0
-
-	for i, page := range pages {
-
-		_, found := inPage[page]
-
-		if !found {
-			// Page fault
-			result.PageFaults++
-
-			if i < frameCount {
-				frames[i] = page
-				inPage[page] = i
-			} else {
-				oldPage := lastUsed
-				mruIdx := inPage[oldPage]
-				delete(inPage, oldPage)
-
-				frames[mruIdx] = page
-				inPage[page] = mruIdx
+	for t, page := range pages {
+		found := false
+		for _, p := range frames {
+			if p == page {
+				found = true
+				break
 			}
 		}
-		lastUsed = page
+
+		if found {
+			lastUsed[page] = t
+		} else {
+			result.PageFaults++
+			if len(frames) < frameCount {
+				frames = append(frames, page)
+			} else {
+				// Tìm trang được dùng gần nhất (MRU)
+				mruPage := frames[0]
+				mruTime := lastUsed[mruPage]
+				for _, p := range frames {
+					if lastUsed[p] > mruTime {
+						mruPage = p
+						mruTime = lastUsed[p]
+					}
+				}
+				// Thay thế mruPage bằng page mới
+				for i, p := range frames {
+					if p == mruPage {
+						frames[i] = page
+						break
+					}
+				}
+				delete(lastUsed, mruPage)
+			}
+			lastUsed[page] = t
+		}
 
 		step := createStep(page, frames, !found, append([]int{}, frames...), make(map[int]int))
 		result.Steps = append(result.Steps, step)
